@@ -1,78 +1,59 @@
-# 💰 Smart Finance Tracker - Python CLI Application
+# 💰 Smart Finance Tracker (Python CLI)
 
-<div align="center">
+A lightweight, interactive command-line application to help users track personal finances by recording income and expenses, viewing summaries, and analyzing spending patterns — all built with core Python concepts.
 
-![Python Version](https://img.shields.io/badge/python-3.6+-blue.svg)
-![License](https://img.shields.io/badge/license-MIT-green.svg)
-![Status](https://img.shields.io/badge/status-active-success.svg)
-![Maintenance](https://img.shields.io/badge/maintained-yes-brightgreen.svg)
-
-**A beautiful, feature-rich command-line personal finance tracker built with Python**
-
-[Features](#-features) •
-[Installation](#-installation) •
-[Usage](#-usage-guide) •
-[Documentation](#-documentation) •
-[Contributing](#-contributing)
-
-</div>
-
----
-
-## 📑 Table of Contents
-
-- [Project Overview](#-project-overview)
-- [Features](#-features)
-- [Screenshots](#-screenshots)
-- [Installation](#-installation)
-- [Usage Guide](#-usage-guide)
-- [Technical Documentation](#-technical-documentation)
-- [Educational Concepts](#-educational-concepts-demonstrated)
-- [Project Structure](#-project-structure)
-- [Data Storage](#-data-storage)
-- [Code Architecture](#-code-architecture)
-- [Error Handling](#-error-handling)
-- [Future Enhancements](#-future-enhancements)
-- [Known Issues](#-known-issues)
-- [FAQ](#-frequently-asked-questions)
-- [Contributing](#-contributing)
-- [Testing](#-testing)
-- [License](#-license)
-- [Acknowledgments](#-acknowledgments)
-- [Contact](#-contact)
+[![Python](https://img.shields.io/badge/Python-3.6%2B-blue)](https://www.python.org/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 ---
 
 ## 🎯 Project Overview
 
-### What is Smart Finance Tracker?
+This project serves as a practical implementation of fundamental programming concepts learned in an introductory course like **CSE1021: Introduction to Problem Solving and Programming**. It allows users to:
 
-**Smart Finance Tracker** is a simple yet powerful command-line interface (CLI) application developed in Python to help users effectively track their personal income and expenses. It provides an intuitive way to record financial transactions, view comprehensive summaries, and analyze spending patterns by category with visual percentage breakdowns.
+- Log income and expense transactions
+- View real-time financial summaries
+- Analyze spending by category with percentage breakdowns
+- Persist data across sessions using JSON storage
 
-### Purpose
-
-This project is designed to demonstrate proficiency in fundamental Python programming concepts, particularly those covered in an introductory Computer Science course like **CSE1021: Introduction to Problem Solving and Programming**. It serves both as a practical financial tool and an educational demonstration of core programming principles.
-
-### Key Highlights
-
-- ✨ **Zero Dependencies** - Uses only Python standard library
-- 🎨 **Beautiful UI** - Color-coded terminal interface with ANSI formatting
-- 💾 **Data Persistence** - Automatic JSON-based data storage
-- 🔒 **Robust Validation** - Comprehensive input validation and error handling
-- 📊 **Smart Analytics** - Category-wise expense breakdown with percentages
-- 🚀 **Easy to Use** - Intuitive menu-driven interface
+The goal is to reinforce understanding of control structures, data types, functions, and file I/O while building a functional tool.
 
 ---
 
 ## ✨ Features
 
-The application provides the following core functionalities through an interactive menu system:
+✅ **Add Income**  
+Record sources of income (e.g., salary, freelance, gifts) with amount, source, and description.
 
-### 1. 📥 Add Income
+✅ **Add Expense**  
+Log expenses categorized by purpose (e.g., Food, Rent, Transport) for better organization.
 
-Record new income transactions with complete details:
-- **Amount**: Monetary value (validated for positive numbers)
-- **Source**: Income source (e.g., Salary, Freelance, Investment, Gift)
-- **Description**: Detailed note about the transaction
+✅ **View Summary & Breakdown**  
+- Total Income  
+- Total Expenses  
+- Net Balance (color-coded: green for positive, red for negative)  
+- **Categorical Expense Analysis**: See how much each category contributes to overall spending (in percentages).
 
-**Example:**
+✅ **View All Transactions**  
+Display a neatly formatted, color-coded table of all recorded transactions with IDs, types, amounts, categories/sources, and descriptions.
+
+✅ **Auto-Save on Exit**  
+All data is automatically saved to `finance_data.json` when exiting, and reloaded on next startup.
+
+✅ **User-Friendly CLI Interface**  
+Clean menu navigation with input validation and colorful feedback using ANSI escape codes.
+
+---
+
+## 📦 Installation & Setup
+
+### Prerequisites
+- Python 3.6 or higher
+- No external libraries required (uses only built-in modules: `json`)
+
+### Steps
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/smart-finance-tracker.git
+   cd smart-finance-tracker
+  
