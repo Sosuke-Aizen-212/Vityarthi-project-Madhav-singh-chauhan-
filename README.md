@@ -41,8 +41,9 @@ pip install -r requirements.txt
    Open your terminal, navigate to the folder containing the file, and run:  
    ```bash
    python finance_tracker.py
+   ```
 
-4. **Interact**\n
+4. **Interact**
    Follow the on-screen menu prompts—
    Type 1 to add income
    Type 2 to add expense
