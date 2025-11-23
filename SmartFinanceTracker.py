@@ -1,57 +1,62 @@
-import json
+import csv
+import os
+
 TRANSACTIONS = []
-DATA_FILE = "finance_data.json"
+# Primary data file remains CSV
+DATA_FILE = "finance_data.csv" 
+FIELDNAMES = ['type', 'amount', 'category', 'description'] 
+
+# --- Color Definitions ---
 RESET = "\033[0m"
 GREEN = "\033[92m"   # For Income
 RED = "\033[91m"     # For Expense
 YELLOW = "\033[93m"  # For Info/Menu borders
 BLUE = "\033[94m"    # For Section Headers
 BOLD = "\033[1m"
-SEPARATOR = "=" * 50 # Standard separator length
-
-# --- CORE FUNCTIONS (Based on Unit 2: Functions) ---
+SEPARATOR = "=" * 50
+# -------------------------
 
 def load_data():
-    """
-    Loads transaction data from a JSON file if it exists.
-    Uses basic file I/O operations (implied by Experiment 2).
-    """
     global TRANSACTIONS
-    try:
-        with open(DATA_FILE, 'r') as f:
-            # Load the data from the file
-            TRANSACTIONS = json.load(f)
-        print(f"\n{YELLOW}[INFO]{RESET} Loaded {len(TRANSACTIONS)} transactions from {DATA_FILE}.")
-    except FileNotFoundError:
+    if not os.path.exists(DATA_FILE):
         print(f"\n{YELLOW}[INFO]{RESET} Data file '{DATA_FILE}' not found. Starting with an empty tracker.")
-    except json.JSONDecodeError:
-        print(f"\n{RED}[ERROR]{RESET} Corrupt data file. Starting with an empty tracker.")
+        return
+
+    try:
+        with open(DATA_FILE, mode='r', newline='') as f:
+            reader = csv.DictReader(f)
+            TRANSACTIONS = []
+            for row in reader:
+                try:
+                    # Convert the amount back to float for calculations
+                    row['amount'] = float(row['amount'])
+                    TRANSACTIONS.append(row)
+                except ValueError:
+                    # Skip corrupt rows
+                    continue 
+
+        print(f"\n{YELLOW}[INFO]{RESET} Loaded {len(TRANSACTIONS)} transactions from {DATA_FILE}.")
+    except Exception as e:
+        print(f"\n{RED}[ERROR]{RESET} Could not load data from CSV: {e}. Starting with an empty tracker.")
         TRANSACTIONS = []
 
 def save_data():
-    """
-    Saves the current transactions list to a JSON file.
-    """
     try:
-        with open(DATA_FILE, 'w') as f:
-            # Dump the current list to the file
-            json.dump(TRANSACTIONS, f, indent=4)
+        with open(DATA_FILE, mode='w', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
+            
+            writer.writeheader()
+            writer.writerows(TRANSACTIONS)
+            
         print(f"{GREEN}[INFO]{RESET} Data successfully saved to {DATA_FILE}.")
     except Exception as e:
         print(f"{RED}[ERROR]{RESET} Could not save data: {e}")
 
-
 def add_transaction(transaction_type):
-    """
-    Function to add a new income or expense transaction.
-    Demonstrates input/output and conditional logic (Unit 2, 3).
-    """
-    # Use color based on transaction type
     prompt_color = GREEN if transaction_type == 'income' else RED
     
     print(prompt_color + BOLD + f"\n--- Add {transaction_type.capitalize()} ---" + RESET)
     
-    # Use a loop to ensure valid amount input
     while True:
         try:
             amount = float(input(f"{prompt_color}Enter amount: {RESET}"))
@@ -69,7 +74,6 @@ def add_transaction(transaction_type):
     else:
         category = input(f"{prompt_color}Enter source (e.g., Salary, Gift, Investment): {RESET}")
 
-    # Create the new transaction dictionary (Unit 5: Dictionaries)
     new_transaction = {
         'type': transaction_type,
         'amount': amount,
@@ -82,28 +86,19 @@ def add_transaction(transaction_type):
 
 
 def view_summary():
-    """
-    Calculates and displays the financial summary (balance, total income/expense).
-    Demonstrates iteration and summation (Unit 3, Experiment 4).
-    Also includes a percentage breakdown for better readability.
-    """
     total_income = 0.0
     total_expense = 0.0
-    category_totals = {} # Dictionary to store category-wise expenses
+    category_totals = {}
 
-    # Iterate through the list of transactions (Unit 5: Lists & Dictionaries)
     for t in TRANSACTIONS:
         amount = t['amount']
         category = t['category']
 
         if t['type'] == 'income':
-            # Summation logic
             total_income += amount
         elif t['type'] == 'expense':
-            # Summation logic
             total_expense += amount
             
-            # Grouping by category
             if category not in category_totals:
                 category_totals[category] = 0.0
             category_totals[category] += amount
@@ -111,7 +106,6 @@ def view_summary():
     balance = total_income - total_expense
     balance_color = GREEN if balance >= 0 else RED
 
-    # Display Summary
     print(BLUE + BOLD + "\n" + SEPARATOR)
     print("        FINANCIAL SUMMARY")
     print(SEPARATOR + RESET)
@@ -121,23 +115,16 @@ def view_summary():
     print("-" * 50)
     print(f"{BOLD}{'Net Balance:':<20}{balance_color}{balance:15.2f}{RESET}")
     print(BLUE + SEPARATOR + RESET)
-
-    # Display expense breakdown
     if category_totals:
         print(YELLOW + BOLD + "\nExpense Breakdown by Category:" + RESET)
-        # Sort categories alphabetically
         for category, total in sorted(category_totals.items()):
-            # Calculate percentage for "smart" analysis
             percentage = (total / total_expense * 100) if total_expense else 0
             print(f"- {category.capitalize():<15}: {RED}{total:10.2f}{RESET} ({percentage:.1f}%)")
     else:
         print("\nNo categorized expenses recorded.")
 
+
 def display_all_transactions():
-    """
-    Lists all recorded transactions with enhanced, color-coded formatting.
-    Demonstrates basic list iteration (Unit 5).
-    """
     if not TRANSACTIONS:
         print("\nNo transactions recorded yet.")
         return
@@ -145,19 +132,13 @@ def display_all_transactions():
     print(BLUE + BOLD + "\n" + SEPARATOR)
     print("               ALL TRANSACTIONS")
     print(SEPARATOR + RESET)
-    
-    # Display column headers with bold formatting
     print(f"{BOLD}{'ID':<3} | {'Type':<8} | {'Amount':>10} | {'Category/Source':<18} | Description{RESET}")
     print("-" * 50)
-
-    # Use 'for' loop to display each record (Experiment 4)
     for i, t in enumerate(TRANSACTIONS, 1):
         type_str = t['type'].upper()
-        amount_str = f"{t['amount']:.2f}"
+        amount_str = f"{t['amount']:.2f}" 
         category_str = t['category'].capitalize()
         description_str = t['description']
-        
-        # Color coding for better readability
         color = GREEN if t['type'] == 'income' else RED
         
         print(f"{i:<3} | {color}{type_str:<8}{RESET} | {color}{amount_str:>10}{RESET} | {category_str:<18} | {description_str}")
@@ -165,16 +146,65 @@ def display_all_transactions():
     print(BLUE + SEPARATOR + RESET)
 
 
-def main_menu():
-    """
-    The main control flow loop for the application.
-    Uses while loop and conditional statements (Unit 3, Experiment 4).
-    """
-    
-    # Load data on startup
-    load_data()
+def export_summary_to_csv():
+    """Calculates the financial summary and exports it to a new CSV file."""
+    if not TRANSACTIONS:
+        print(f"{RED}Cannot export summary: No transactions recorded.{RESET}")
+        return
 
-    # Main application loop
+    total_income = 0.0
+    total_expense = 0.0
+    category_totals = {}
+
+    for t in TRANSACTIONS:
+        amount = t['amount']
+        if t['type'] == 'income':
+            total_income += amount
+        elif t['type'] == 'expense':
+            total_expense += amount
+            category = t['category']
+            if category not in category_totals:
+                category_totals[category] = 0.0
+            category_totals[category] += amount
+    
+    balance = total_income - total_expense
+    
+    # 1. Prepare Data for Summary CSV
+    REPORT_FILE = "summary_report.csv"
+    REPORT_FIELDNAMES = ['Type', 'Category', 'Amount', 'Percentage']
+    report_data = []
+
+    # Add Overall Totals
+    report_data.append({'Type': 'Total Income', 'Category': '', 'Amount': total_income, 'Percentage': ''})
+    report_data.append({'Type': 'Total Expense', 'Category': '', 'Amount': total_expense, 'Percentage': ''})
+    report_data.append({'Type': 'Net Balance', 'Category': '', 'Amount': balance, 'Percentage': ''})
+    
+    # Add Expense Breakdown
+    report_data.append({'Type': '--- EXPENSE BREAKDOWN ---', 'Category': '', 'Amount': '', 'Percentage': ''})
+    for category, total in sorted(category_totals.items()):
+        percentage = (total / total_expense * 100) if total_expense else 0
+        report_data.append({
+            'Type': 'Expense',
+            'Category': category.capitalize(),
+            'Amount': total,
+            'Percentage': f"{percentage:.1f}%"
+        })
+
+    # 2. Write to CSV file
+    try:
+        with open(REPORT_FILE, mode='w', newline='') as f:
+            writer = csv.DictWriter(f, fieldnames=REPORT_FIELDNAMES)
+            
+            writer.writeheader()
+            writer.writerows(report_data)
+            
+        print(f"\n{GREEN}{BOLD}[SUCCESS]{RESET} Financial Summary exported to '{REPORT_FILE}'.")
+    except Exception as e:
+        print(f"{RED}[ERROR]{RESET} Could not export summary to CSV: {e}")
+
+
+def main_menu():
+    load_data()
     while True:
         print(YELLOW + BOLD + "\n" + SEPARATOR[:30])
         print("  SMART FINANCE TRACKER MENU")
@@ -184,12 +214,10 @@ def main_menu():
         print("3. " + BLUE + "View Summary & Breakdown" + RESET)
         print("4. View All Transactions")
         print("5. Save & Exit")
+        # New option for exporting the summary
+        print("6. Export Summary to New CSV") 
         print(YELLOW + SEPARATOR[:30] + RESET)
-
-        # Get user input
-        choice = input("Enter your choice (1-5): ")
-
-        # Conditional control flow (if-elif-else)
+        choice = input("Enter your choice (1-6): ")
         if choice == '1':
             add_transaction('income')
         elif choice == '2':
@@ -199,15 +227,13 @@ def main_menu():
         elif choice == '4':
             display_all_transactions()
         elif choice == '5':
-            # Exit condition (break)
             print(YELLOW + "\nExiting Tracker. Thank you!" + RESET)
             save_data()
             break
+        elif choice == '6':
+            export_summary_to_csv()
         else:
-            print(RED + "\nInvalid choice. Please enter a number between 1 and 5." + RESET)
-
-# --- PROGRAM EXECUTION ---
+            print(RED + "\nInvalid choice. Please enter a number between 1 and 6." + RESET)
 
 if __name__ == "__main__":
-    # This is the entry point of the program.
     main_menu()
