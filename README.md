@@ -2,16 +2,22 @@
 
 This is a simple, command-line interface (CLI) application developed in Python to help users track their personal income and expenses. It provides a quick way to record financial transactions, view a comprehensive summary, and analyze spending patterns by category.
 
-#Features
+# Features
 
 The application provides the following core functionalities through an interactive menu:
-Add Income: Record a new income transaction with amount, source, and description.
-Add Expense: Record a new expense transaction with amount, category, and description.
-View Summary & Breakdown:
-Displays Total Income, Total Expense, and Net Balance.
-Provides a Categorical Breakdown of expenses, including the percentage each category contributes to the total spending, offering a basic form of financial analysis.
-View All Transactions: Lists all recorded transactions with clear, color-coded formatting for easy readability.
-Save & Exit: Automatically saves all transaction data to a summary_report.csv file before exiting, ensuring data persistence.
+
+- **Add Income**: Record a new income transaction with the amount, source, and description.
+
+- **Add Expense**: Record a new expense transaction with the amount, category, and description.
+
+- **View Summary & Breakdown**:
+  - Displays Total Income, Total Expense, and Net Balance.
+  - Provides a Categorical Breakdown of expenses, including the percentage each category contributes to the total spending, offering a basic form of financial analysis.
+
+- **View All Transactions**: Lists all recorded transactions with clear, color-coded formatting for easy readability.
+
+- **Save & Exit**: Automatically saves all transaction data to a local `summary_report.csv` file before exiting, ensuring data persistence.
+
 ## Files
 
 - `diabetes.csv` - Dataset
