@@ -119,4 +119,11 @@ ID  | Type     |     Amount | Category/Source  | Description
 1   | INCOME   |    3000.00 | Salary           | Monthly paycheck
 2   | EXPENSE  |      50.00 | Food             | Groceries from Walmart
 5. Save & Exit
-Saves current transaction data to finance_data.json and exits the program cleanly.
+Saves current transaction data to finance_data.json and exits the program cleanly.Function/Variable,Description,Python Concepts Demonstrated
+TRANSACTIONS,Global list holding transaction dictionaries.,"Global Variable, Lists"
+load_data(),Reads the TRANSACTIONS list from a JSON file.,"File I/O (try/except), JSON module"
+save_data(),Writes the TRANSACTIONS list to a JSON file.,"File I/O (with open), JSON module"
+add_transaction(type),"Prompts the user for details (amount, description, category) and appends a new transaction dictionary to TRANSACTIONS.","Functions, Input/Output, while loop (input validation), Dictionaries, Conditional Logic"
+view_summary(),Iterates through TRANSACTIONS to calculate totals and category-wise expenses.,"Iteration (for loop), Summation, Dictionaries (for grouping/counting), Conditional Logic"
+display_all_transactions(),Lists all transactions using enumerate for numbering and string formatting for alignment.,"List Iteration (for i, t in enumerate), String Formatting"
+main_menu(),"The main control loop that displays the menu, takes user input, and calls the appropriate function.","Control Flow (while True, if/elif/else), Function Calls"
