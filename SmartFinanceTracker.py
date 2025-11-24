@@ -2,19 +2,16 @@ import csv
 import os
 
 TRANSACTIONS = []
-# Primary data file remains CSV
 DATA_FILE = "summary_report.csv" 
 FIELDNAMES = ['type', 'amount', 'category', 'description'] 
 
-# --- Color Definitions ---
 RESET = "\033[0m"
-GREEN = "\033[92m"   # For Income
-RED = "\033[91m"     # For Expense
-YELLOW = "\033[93m"  # For Info/Menu borders
-BLUE = "\033[94m"    # For Section Headers
+GREEN = "\033[92m"   
+RED = "\033[91m"     
+YELLOW = "\033[93m"  
+BLUE = "\033[94m"    
 BOLD = "\033[1m"
 SEPARATOR = "=" * 50
-# -------------------------
 
 def load_data():
     global TRANSACTIONS
@@ -28,11 +25,9 @@ def load_data():
             TRANSACTIONS = []
             for row in reader:
                 try:
-                    # Convert the amount back to float for calculations
                     row['amount'] = float(row['amount'])
                     TRANSACTIONS.append(row)
                 except ValueError:
-                    # Skip corrupt rows
                     continue 
 
         print(f"\n{YELLOW}[INFO]{RESET} Loaded {len(TRANSACTIONS)} transactions from {DATA_FILE}.")
@@ -44,19 +39,15 @@ def save_data():
     try:
         with open(DATA_FILE, mode='w', newline='') as f:
             writer = csv.DictWriter(f, fieldnames=FIELDNAMES)
-            
             writer.writeheader()
             writer.writerows(TRANSACTIONS)
-            
         print(f"{GREEN}[INFO]{RESET} Data successfully saved to {DATA_FILE}.")
     except Exception as e:
         print(f"{RED}[ERROR]{RESET} Could not save data: {e}")
 
 def add_transaction(transaction_type):
     prompt_color = GREEN if transaction_type == 'income' else RED
-    
     print(prompt_color + BOLD + f"\n--- Add {transaction_type.capitalize()} ---" + RESET)
-    
     while True:
         try:
             amount = float(input(f"{prompt_color}Enter amount: {RESET}"))
@@ -66,7 +57,6 @@ def add_transaction(transaction_type):
             break
         except ValueError:
             print(f"{RED}Invalid input. Please enter a number.{RESET}")
-
     description = input(f"{prompt_color}Enter description: {RESET}")
     
     if transaction_type == 'expense':
@@ -89,27 +79,21 @@ def view_summary():
     total_income = 0.0
     total_expense = 0.0
     category_totals = {}
-
     for t in TRANSACTIONS:
         amount = t['amount']
         category = t['category']
-
         if t['type'] == 'income':
             total_income += amount
         elif t['type'] == 'expense':
             total_expense += amount
-            
             if category not in category_totals:
                 category_totals[category] = 0.0
             category_totals[category] += amount
-    
     balance = total_income - total_expense
     balance_color = GREEN if balance >= 0 else RED
-
     print(BLUE + BOLD + "\n" + SEPARATOR)
     print("        FINANCIAL SUMMARY")
     print(SEPARATOR + RESET)
-    
     print(f"{BOLD}{'Total Income:':<20}{GREEN}{total_income:15.2f}{RESET}")
     print(f"{BOLD}{'Total Expense:':<20}{RED}{total_expense:15.2f}{RESET}")
     print("-" * 50)
@@ -122,7 +106,6 @@ def view_summary():
             print(f"- {category.capitalize():<15}: {RED}{total:10.2f}{RESET} ({percentage:.1f}%)")
     else:
         print("\nNo categorized expenses recorded.")
-
 
 def display_all_transactions():
     if not TRANSACTIONS:
@@ -139,10 +122,8 @@ def display_all_transactions():
         amount_str = f"{t['amount']:.2f}" 
         category_str = t['category'].capitalize()
         description_str = t['description']
-        color = GREEN if t['type'] == 'income' else RED
-        
+        color = GREEN if t['type'] == 'income' else RED        
         print(f"{i:<3} | {color}{type_str:<8}{RESET} | {color}{amount_str:>10}{RESET} | {category_str:<18} | {description_str}")
-    
     print(BLUE + SEPARATOR + RESET)
 
 
@@ -151,11 +132,9 @@ def export_summary_to_csv():
     if not TRANSACTIONS:
         print(f"{RED}Cannot export summary: No transactions recorded.{RESET}")
         return
-
     total_income = 0.0
     total_expense = 0.0
     category_totals = {}
-
     for t in TRANSACTIONS:
         amount = t['amount']
         if t['type'] == 'income':
@@ -166,20 +145,13 @@ def export_summary_to_csv():
             if category not in category_totals:
                 category_totals[category] = 0.0
             category_totals[category] += amount
-    
     balance = total_income - total_expense
-    
-    # 1. Prepare Data for Summary CSV
     REPORT_FILE = "summary_report.csv"
     REPORT_FIELDNAMES = ['Type', 'Category', 'Amount', 'Percentage']
-    report_data = []
-
-    # Add Overall Totals
+    report_data =[]
     report_data.append({'Type': 'Total Income', 'Category': '', 'Amount': total_income, 'Percentage': ''})
     report_data.append({'Type': 'Total Expense', 'Category': '', 'Amount': total_expense, 'Percentage': ''})
     report_data.append({'Type': 'Net Balance', 'Category': '', 'Amount': balance, 'Percentage': ''})
-    
-    # Add Expense Breakdown
     report_data.append({'Type': '--- EXPENSE BREAKDOWN ---', 'Category': '', 'Amount': '', 'Percentage': ''})
     for category, total in sorted(category_totals.items()):
         percentage = (total / total_expense * 100) if total_expense else 0
@@ -189,15 +161,11 @@ def export_summary_to_csv():
             'Amount': total,
             'Percentage': f"{percentage:.1f}%"
         })
-
-    # 2. Write to CSV file
     try:
         with open(REPORT_FILE, mode='w', newline='') as f:
             writer = csv.DictWriter(f, fieldnames=REPORT_FIELDNAMES)
-            
             writer.writeheader()
-            writer.writerows(report_data)
-            
+            writer.writerows(report_data)  
         print(f"\n{GREEN}{BOLD}[SUCCESS]{RESET} Financial Summary exported to '{REPORT_FILE}'.")
     except Exception as e:
         print(f"{RED}[ERROR]{RESET} Could not export summary to CSV: {e}")
@@ -214,7 +182,6 @@ def main_menu():
         print("3. " + BLUE + "View Summary & Breakdown" + RESET)
         print("4. View All Transactions")
         print("5. Save & Exit")
-        # New option for exporting the summary
         print("6. Export Summary to New CSV") 
         print(YELLOW + SEPARATOR[:30] + RESET)
         choice = input("Enter your choice (1-6): ")
@@ -237,4 +204,5 @@ def main_menu():
 
 if __name__ == "__main__":
     main_menu()
+
 
