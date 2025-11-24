@@ -58,5 +58,7 @@ pip install -r requirements.txt
        -Full datasheet for Personal Finance
 
 
+<img width="961" height="251" alt="Image" src="https://github.com/user-attachments/assets/6c287951-b250-407b-8c9b-2cb7da8eab8b" />
+
 
 
